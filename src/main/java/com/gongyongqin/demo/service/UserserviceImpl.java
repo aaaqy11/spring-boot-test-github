@@ -44,17 +44,5 @@ public class UserserviceImpl implements Userservice {
         return userdao.deleteUser(ID);
     }
 
-    @Override
-    public int batchDel(Map ids) {
-        String ides = ids.get("ids") + "";
-        String[] idArr = ides.split(",");
-        List IDs = new ArrayList();
-        for (int i = 0; i< idArr.length;i++) {
-            IDs.add(Integer.valueOf(idArr[i]));
-        }
-        int i =userdao.batchDel(IDs);
-        return  i;
-    }
-
 
 }

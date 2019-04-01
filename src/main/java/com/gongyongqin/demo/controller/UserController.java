@@ -77,12 +77,5 @@ public class UserController {
     public Object delete(@RequestBody Map map){
         return userservice.deleteUser(Integer.valueOf(map.get("ID")+""));
     }
-    /**
-     * 员工批量删除操作
-     */
-    @RequestMapping("batchDel")
-    @ResponseBody
-    public Object batchDel(@RequestBody Map map){
-        return userservice.batchDel(map);
-    }
+
 }

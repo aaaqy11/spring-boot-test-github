@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gongyongqin.demo.dao.Equ_maintenanceDao">
+    <select id="getEquList" resultType="map">
+        select * from Equ_maintenance
+    </select>
+    <select id="getEquListBy" resultType="map">
+        select * from Equ_maintenance
+        <where>
+            <if test="equ_id != null and equ_id != ''">
+              and equ_id = #{equ_id}
+            </if>
+        </where>
+    </select>
+    <insert id="addEqu" >
+        insert into Equ_maintenance values (null,#{equ_id},#{equ_name},#{main_infor},#{main_user},date_format(#{main_time},'%Y-%m-%d'),#{fstatue},#{reason})
+    </insert>
+    <update id="updateEqu">
+        update Equ_maintenance set
+        equ_id=#{equ_id},
+        equ_name=#{equ_name},
+        main_time=#{main_time}
+        where
+        id = #{id}
+    </update>
+    <delete id="deleteEqu">
+        delete from equ_maintenance where id=#{id}
+    </delete>
+    <delete id="equDel">
+        delete from equ_maintenance where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

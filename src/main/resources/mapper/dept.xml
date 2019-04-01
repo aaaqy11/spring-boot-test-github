@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gongyongqin.demo.dao.DeptDao">
+    <select id="getDeptList" resultType="map">
+        select * from dept
+    </select>
+    <select id="getDeptListBy" resultType="map">
+        select * from dept
+        <where>
+            <if test="d_name != null and d_name !=''">
+                and d_name = #{d_name}
+            </if>
+        </where>
+    </select>
+    <insert id="dpetAdd" >
+        insert into dept VALUES (null,#{d_id},#{d_name},#{des},#{state})
+    </insert>
+    <update id="deptUpdate">
+        update dept set
+        d_id=#{d_id},
+        d_name=#{d_name},
+        des=#{des},
+        state=#{state}
+        where
+        dept_id=#{dept_id}
+    </update>
+    <delete id="deptDelete">
+        delete from dept where dept_id = #{dept_id}
+    </delete>
+    <delete id="deptDel">
+        delete from dept where dept_id in
+        <foreach collection="list" item="dept_id" open="(" separator="," close=")">
+            #{dept_id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gongyongqin.demo.dao.Equ_maintenanceDao">
+    <select id="getPowerList" resultType="map">
+        select p.*
+        from power p
+        join (select *
+        from role_power
+        where roleid = #{0}) e
+        on p.id = e.powerid
+    </select>
+    <select id="getPList" resultType="map">
+        select * from power
+    </select>
+    <select id="getFid" resultType="map">
+        select powerid from role_power where roleid = #{0}
+    </select>
+
+    <select id="selectTreeByPid" resultType="map">
+        select * from power where  parentid = #{pid}
+    </select>
+
+    <insert id="insertTree">
+        insert into power (id,name,iconcls,state,url,parentid) values (id,#{name},'aaa','1',#{url},#{parentid})
+    </insert>
+    <update id="updateTree">
+        update power set name = #{name}, url = #{url}, parentid = #{parentid} where id = #{id}
+    </update>
+    <delete id="deleteTree">
+        delete from power where id = #{id}
+    </delete>
+    <select id="selectFid" resultType="map">
+        select parentid from power where id = #{param1}
+    </select>
+</mapper>

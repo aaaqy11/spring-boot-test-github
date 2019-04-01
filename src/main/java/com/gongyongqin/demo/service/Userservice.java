@@ -34,10 +34,4 @@ public interface Userservice {
      */
     int deleteUser(Integer ID);
 
-    /**
-     * 批量删除
-     * @param
-     * @return
-     */
-    int batchDel(Map map);
 }
