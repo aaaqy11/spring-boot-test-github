@@ -1,12 +1,22 @@
 package com.gongyongqin.demo.dao;
 
+import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
 
 public interface BuyDao {
     /**
+     * 查
+     * @return
+     */
+    //@Select("select * from buy")
+    List<Map> buyList();
+    /**
      * 查询购买设备表
      */
+    //@Select("select * from buy")
     List<Map> buyListBy(Map map);
 
     /**

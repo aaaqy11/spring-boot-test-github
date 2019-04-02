@@ -5,6 +5,11 @@ import java.util.Map;
 
 public interface BuyService {
     /**
+     *查
+     * @return
+     */
+    Map buyList();
+    /**
      * 查询购买设备表
      */
     List<Map> buyListBy(Map map);

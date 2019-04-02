@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +30,11 @@ public class BuyController {
         return "meikuang/buy";
     }
 
+    @RequestMapping("getBuyList")
+    @ResponseBody
+    private Object getBuylist(Map map){
+        return buyService.buyList();
+    }
     /**
      * 按条件查询
      * @param map
@@ -34,16 +42,17 @@ public class BuyController {
      */
     @RequestMapping("getBuyListBy")
     @ResponseBody
-    private Object getBuyList(Map map){
+    private Object getBuyListBy(@RequestBody Map map){
+        System.out.println("map："+map);
         //设置当前第几页和每页显示数量
         PageHelper.startPage(Integer.valueOf(map.get("pageNo") + ""), Integer.valueOf(map.get("pageSize") + ""));
         //用PageInfo对结果进行包装
         PageInfo<Map> pageInfo = new PageInfo<Map>(buyService.buyListBy(map));
+        System.out.println("list:"+buyService.buyListBy(map));
         Map resultMap = new HashMap();
         resultMap.put("total", pageInfo.getTotal());
         resultMap.put("pageData", pageInfo.getList());
-        System.out.println(pageInfo.getTotal());
-        System.out.println(pageInfo.getList());
+
         return resultMap;
     }
 

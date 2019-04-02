@@ -43,7 +43,7 @@ public class DeptController {
 
     @RequestMapping("getDeptListBy")
     @ResponseBody
-    private Object getDeptListBy(@RequestBody Map map){
+    private Object getDeptListBy(Map map){
         //设置当前第几页和每页显示数量
         PageHelper.startPage(Integer.valueOf(map.get("pageNo") + ""), Integer.valueOf(map.get("pageSize") + ""));
         //用PageInfo对结果进行包装

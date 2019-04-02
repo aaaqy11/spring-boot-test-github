@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gongyongqin.demo.dao.DeptDao">
+<mapper namespace="com.gongyongqin.demo.dao.BuyDao">
     <select id="buyListBy" resultType="map">
         select * from buy
-        <!--<where>
-            <if test="d_name != null and d_name !=''">
-                and d_name = #{d_name}
+<!--
+        <where>
+            <if test="id != null and id !=''">
+                and id = #{id}
             </if>
-        </where>-->
+        </where>
+-->
     </select>
     <insert id="buyAdd" >
         insert into buy VALUES (null,#{price},#{equ_vendor},str_to_date(#{buy_time},'%Y-%m-%d'))
     </insert>
     <update id="buyUpdate">
-        update dept set
+        update buy set
         price=#{price},
         equ_vendor=#{equ_vendor},
-        buy_time=#{buy_time},
+        buy_time=str_to_date(#{buy_time},'%Y-%m-%d')
         where
         id=#{id}
     </update>
