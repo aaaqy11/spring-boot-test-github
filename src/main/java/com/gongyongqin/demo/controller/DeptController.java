@@ -41,18 +41,23 @@ public class DeptController {
         return deptService.getDeptList();
     }
 
+    /**
+     * 按条件查询部门列表
+     * @param map
+     * @return
+     */
     @RequestMapping("getDeptListBy")
     @ResponseBody
-    private Object getDeptListBy(Map map){
+    private Object getDeptListBy(@RequestBody Map map){
+        System.out.println("map："+map);
         //设置当前第几页和每页显示数量
         PageHelper.startPage(Integer.valueOf(map.get("pageNo") + ""), Integer.valueOf(map.get("pageSize") + ""));
         //用PageInfo对结果进行包装
         PageInfo<Map> pageInfo = new PageInfo<Map>(deptService.getDeptListBy(map));
+        System.out.println("list:"+deptService.getDeptListBy(map));
         Map resultMap = new HashMap();
         resultMap.put("total", pageInfo.getTotal());
         resultMap.put("pageData", pageInfo.getList());
-        System.out.println(pageInfo.getTotal());
-        System.out.println(pageInfo.getList());
         return resultMap;
     }
 

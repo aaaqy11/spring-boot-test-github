@@ -8,7 +8,7 @@ public interface DeptService {
      * 获取部门列表
      * @return
      */
-    Map getDeptList();
+    List<Map> getDeptList();
 
     /**
      *  通过条件获取部门列表

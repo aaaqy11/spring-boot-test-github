@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>部门列表</title>
+    <title>员工列表</title>
     <!-- 引入样式 -->
     <script type="text/javascript" src="../js/vue.js"></script>
     <script type="text/javascript" src="../js/axios.min.js"></script>
@@ -20,8 +20,20 @@
     <!--列表顶部搜索和工具条-->
     <el-row>
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
-            <el-form-item label="部门名称">
-                <el-input v-model="searchForm.d_name" placeholder="部门名称"></el-input>
+            <el-form-item label="员工姓名">
+                <el-input v-model="searchForm.emp_name" placeholder="姓名"></el-input>
+            </el-form-item>
+            <el-form-item label="员工部门">
+                <template>
+                    <el-select v-model="searchForm.d_name" placeholder="请选择">
+                        <el-option
+                                v-for="item in options"
+                                :key="item.dept_id"
+                                :label="item.d_name"
+                                :value="item.d_name">
+                        </el-option>
+                    </el-select>
+                </template>
             </el-form-item>
             <el-button type="primary" icon="el-icon-search" @click="searchClick">查询</el-button>
             <el-button type="success" icon="el-icon-circle-plus-outline" @click="addClick">新增</el-button>
@@ -42,25 +54,46 @@
                     align="center">
             </el-table-column>
             <el-table-column
-                    prop="d_id"
-                    label="部门编号"
+                    prop="emp_id"
+                    label="员工ID"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="emp_name"
+                    label="员工名称"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="emp_sex"
+                    label="员工性别"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="emp_sql"
+                    label="员工工资"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="emp_comm"
+                    label="奖金"
                     align="center">
             </el-table-column>
             <el-table-column
                     prop="d_name"
-                    label="部门名称"
+                    label="部门"
                     align="center">
             </el-table-column>
             <el-table-column
-                    prop="des"
-                    label="部门简介"
+                    prop="emp_time"
+                    label="入职时间"
                     align="center">
             </el-table-column>
             <el-table-column
-                    prop="state"
-                    label="部门状态"
+                    prop="emp_phone"
+                    label="电话"
                     align="center">
             </el-table-column>
+
             <el-table-column
                     label="操作"
                     align="center">
@@ -83,7 +116,7 @@
                     @size-change="pageSizeChange"
                     @current-change="currentPageChange"
                     :current-page="currentPage"
-                    :page-sizes="[ 2,5]"
+                    :page-sizes="[2,5]"
                     :page-size="pageSize"
                     layout="total, sizes, prev, pager, next, jumper"
                     :total="total">
@@ -93,28 +126,55 @@
 
     <!--编辑界面-->
     <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
-        <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-            <el-form-item label="部门编号" prop="d_id">
-                <el-input v-model="editForm.d_id" auto-complete="off"></el-input>
+        <el-form :model="editForm" label-width="90px" :rules="editFormRules" ref="editForm" >
+            <el-row :gutter="5">
+                <el-col :span="8">
+            <el-form-item label="员工编号" prop="emp_id">
+                <el-input v-model="editForm.emp_id" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="部门名称" prop="d_name">
-                <el-input v-model="editForm.d_name" auto-complete="off"></el-input>
+            <el-form-item label="员工姓名" prop="emp_name">
+                <el-input v-model="editForm.emp_name" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="部门简介" prop="des">
-                <el-input v-model="editForm.des" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="部门状态">
+            <el-form-item label="员工部门" prop="d_name">
                 <template>
-                    <el-select v-model="editForm.state" clearable placeholder="请选择">
-                        <el-option
-                                v-for="item in deptnos"
-                                :key="item.state"
-                                :label="item.state"
-                                :value="item.state">
-                        </el-option>
-                    </el-select>
+                <el-select v-model="editForm.d_name" clearable placeholder="请选择">
+                    <el-option
+                            v-for="item in options"
+                            :key="item.dept_id"
+                            :label="item.d_name"
+                            :value="item.dept_id">
+                    </el-option>
+                </el-select>
                 </template>
             </el-form-item>
+            <el-form-item label="入职时间" prop="emp_time">
+                <el-date-picker
+                    type="date"
+                    placeholder="选择日期"
+                    value-format="yyyy-MM-dd"
+                    v-model="editForm.emp_time"
+                    >
+                </el-date-picker>
+            </el-form-item>
+                </el-col>
+                <el-col :span="8">
+            <el-form-item label="性别" prop="emp_sex">
+                <el-radio-group v-model="editForm.emp_sex">
+                    <el-radio class="radio" label="男">男</el-radio>
+                    <el-radio class="radio" label="女">女</el-radio>
+                </el-radio-group>
+            </el-form-item>
+                    <el-form-item label="薪水(元)" prop="emp_sql">
+                        <el-input v-model.number="editForm.emp_sql" auto-complete="off" type="number"></el-input>
+                    </el-form-item>
+                    <el-form-item label="奖金(元)" prop="emp_comm">
+                        <el-input v-model.number="editForm.emp_comm" auto-complete="off" type="number"></el-input>
+                    </el-form-item>
+                    <el-form-item label="电话号" prop="emp_phone">
+                        <el-input v-model.number="editForm.emp_phone" auto-complete="off"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click.native="editFormVisible = false">取消</el-button>
@@ -129,14 +189,14 @@
     var app = new Vue({
         el: '#app',
         data: {
-            message: '部门列表'
+            message: '员工列表'
         }
     });
     var tableView = new Vue({
         el: '#tableView',
         data: {
             //部门状态下拉框
-            deptnos:[{state:"开启"},{state:"关闭"}],
+            deptnos:[{STATE:"开启"},{STATE:"关闭"}],
             //部门下拉框
             options:[],
             //角色下拉框
@@ -147,7 +207,8 @@
             loading:false,
             //搜索表单
             searchForm: {
-                d_name: ''
+                d_name: '',
+                emp_name:''
             },
             //多选值
             multipleSelection: [],
@@ -164,50 +225,69 @@
             editLoading: false,
             goUrl:'',
             editFormRules: {
-                d_id:[
-                    {required: true, message: '请填写部门编号', trigger: 'blur'}
+                emp_id:[
+                    {required: true, message: '请填写编号', trigger: 'blur'}
+                ],
+                emp_name:[
+                    {required: true, message: '请输入员工名', trigger: 'blur'}
+                ],
+                emp_sex:[
+                    {required: true, message: '请填写性别', trigger: 'change'}
                 ],
                 d_name:[
-                    {required: true, message: '请填写部门名称', trigger: 'blur'}
+                    {required: true, message: '请选择部门', trigger: 'change'}
                 ],
-                des:[
-                    {required: true, message: '请添加部门描述', trigger: 'blur'}
+                emp_time:[
+                    {required: true, message: '请选择入职日期', trigger: 'change'}
                 ],
-                state:[
-                    {required: true, message: '请选择状态', trigger: 'change'}
+                emp_sql:[
+                    {required: true, message: '请添加工资', trigger: 'change'}
+                ],
+                emp_comm:[
+                    {required: true, message: '请输入奖金', trigger: 'change'}
+                ],
+                emp_phone:[
+                    {required: true, message: '请输入手机号', trigger: 'change'},
+                    {
+                        pattern: /^1[34578]\d{9}$/,
+                        message: '目前只支持中国大陆的手机号码!'
+                    }
                 ]
             },
             //编辑界面数据
             editForm: {
-                dept_id:'',
+                id:'',
+                emp_id:'',
+                emp_name:'',
                 d_name:'',
-                des:'',
-                d_id:'',
-                state:''
+                emp_sex:'',
+                emp_time:'',
+                emp_sql:'',
+                emp_comm:'',
+                emp_phone:''
+
             },
         },
         //列表显示
         created:function(){
-            //在 then的内部不能使用Vue的实例化的this, 因为在内部 this 没有被绑定。
             var self = this;
-            axios.post('/dept/getDeptListBy',{'pageNo':self.currentPage,'pageSize':self.pageSize}).then(function(response){
+            axios.post('/emp/getEmpList',{'pageNo':self.currentPage, 'pageSize':self.pageSize}).then(function(response){
                 self.total=response.data.total;
                 self.tableData = response.data.pageData;
-                alert(JSON.stringify(response.data))
+            })
+            axios.post('/dept/getDeptList').then(function (response) {
+                self.options = response.data;
+                //alert(JSON.stringify(response.data));
             })
         },
         methods:{
             //清空表格数据
             toPush:function(){
-                this. searchForm= {
-                    dept_id:'',
-                    d_name: '',
-                    des:'',
-                    d_id:'',
-                    state:''
+                    searchForm= {
+                        d_name: '',
+                        emp_name:''
                 }
-                //alert('刷新');
-                this.loadingData();//重新加载数据
+                location.href=location.href;//重新加载数据
             },
             //表格重新加载数据
             loadingData:function() {
@@ -217,15 +297,14 @@
                 var searchForm={
                     'pageNo':_self.currentPage,
                     'pageSize':_self.pageSize,
-                    'd_name':_self.searchForm.d_name
+                    'd_Name':_self.searchForm.d_name,
+                    'emp_Name':_self.searchForm.emp_name
                 };
-                axios.post('/dept/getDeptListBy',searchForm).then(function(response){
+                axios.post('/emp/getEmpList',searchForm).then(function(response){
                     _self.total=response.data.total;
                     _self.tableData = response.data.pageData;
-                    //alert(JSON.stringify(response.data.pageData));
-                    //alert(JSON.stringify(response.data.total));
                 })
-                //console.log(_self.currentPage);
+                console.log(_self.currentPage);
                 //查
                 setTimeout(function(){
                     console.info("加载数据成功");
@@ -234,24 +313,25 @@
             },
             //表格编辑事件
             editClick:function(row){
-                this.goUrl="/dept/updateDept";
+                this.goUrl="/emp/updateEmp";
                 this.editFormVisible = true;
                 //alert(Object.assign({}, row));
                 this.editForm = Object.assign({}, row);
-                _self.loadingData();//重新加载数据
+                this.loadingData();//重新加载数据
             },
             //表格删除事件
             deleteClick:function(row) {
                 var _self = this;
-                this.$confirm('确认删除' + row.dept_id +'吗?', '提示', {
+                this.$confirm('确认删除' + row.id +'吗?', '提示', {
                     type: 'warning'
                 }).then(function(){
-                    var url="/dept/deleteDept";
-                    axios.post(url,{dept_id:row.dept_id}).then(function (response) {
+                    var url="/emp/deleteEmp";
+                    axios.post(url,{ID:row.id}).then(function (response) {
                         //alert(response.data);
+                        alert(row.id);
                         if(response.data>0){
                             _self.$message({
-                                message: row.dept_id+ '删除成功',
+                                message: row.id+ '删除成功',
                                 type: 'success'
                             });
                             //alert("111");
@@ -265,15 +345,19 @@
             },
             //新建事件
             addClick:function() {
-                this.goUrl="/dept/deptAdd";
+                this.goUrl="/emp/insertEmp";
                 var _self = this;
                 //清空url，解决先点更新，点取消，后点添加的是带这条数据的Bug
                 this.editForm= {
-                    dept_id:'',
+                    id:'',
+                    emp_id:'',
+                    emp_name:'',
                     d_name:'',
-                    des:'',
-                    d_id:'',
-                    state:''
+                    emp_sex:'',
+                    emp_time:'',
+                    emp_sql:'',
+                    emp_comm:'',
+                    emp_phone:''
                 }
                 this.editFormVisible = true;
                 _self.loadingData();//重新加载数据
@@ -301,12 +385,12 @@
                 var ids = '';
                 for(var i=0;i<multipleSelection.length;i++) {
                     var row = multipleSelection[i];
-                    ids += row.dept_id + ","
+                    ids += row.id + ","
                 }
                 this.$confirm('确认删除' + ids +'吗?', '提示', {
                     type: 'warning'
                 }).then(function(){
-                    var  url="/dept/batchDel";
+                    var  url="/emp/batchDel";
                     axios.post(url,{ids:ids}).then(function (response) {
                         //alert(response.data);
                         var temp="";
@@ -319,6 +403,7 @@
                             message: ids + temp,
                             type: 'success'
                         });
+
                         _self.loadingData();//重新加载数据
                     });
 
@@ -337,7 +422,7 @@
             //当前页修改事件
             currentPageChange:function(val) {
                 this.currentPage = val;
-                this.loadingData();//重新加载数据
+                this.loadingData();
             },
             //保存点击事件
             editSubmit: function () {
@@ -362,6 +447,7 @@
         }
 
     })
+
 </script>
 
 </body>

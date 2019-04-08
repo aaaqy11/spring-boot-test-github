@@ -23,9 +23,9 @@
             <el-form-item label="设备编号">
                 <el-input v-model="searchForm.equ_id" placeholder="编号"></el-input>
             </el-form-item>
-            <el-button type="primary" icon="search" @click="searchClick">查询</el-button>
-            <el-button type="success" icon="plus" @click="addClick">新增</el-button>
-            <el-button type="success" icon="plus" @click="toPush">刷新</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="searchClick">查询</el-button>
+            <el-button type="success" icon="el-icon-circle-plus-outline" @click="addClick">新增</el-button>
+            <el-button type="success" icon="el-icon-refresh" @click="toPush">刷新</el-button>
             </el-form-item>
         </el-form>
     </el-row>
@@ -62,8 +62,8 @@
                     label="操作"
                     align="center">
                 <template scope="scope">
-                    <el-button :plain="true" type="success" size="small" icon="edit" @click="editClick(scope.row)">编辑</el-button>
-                    <el-button :plain="true" type="danger" size="small" icon="delete" @click="deleteClick(scope.row)">删除</el-button>
+                    <el-button :plain="true" type="success" size="small" icon="el-icon-edit" @click="editClick(scope.row)">编辑</el-button>
+                    <el-button :plain="true" type="danger" size="small" icon="el-icon-delete" @click="deleteClick(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -72,7 +72,7 @@
     <!--列表底部工具条和分页符-->
     <el-row style="margin-top: 20px" type="flex" justify="end">
         <el-col :span="6" >
-            <el-button :plain="true" type="danger" size="small" icon="delete" @click="removeSelection">删除所选</el-button>
+            <el-button :plain="true" type="danger" size="small" icon="el-icon-remove-outline" @click="removeSelection">删除所选</el-button>
         </el-col>
         <el-col :span="18" >
             <el-pagination
@@ -97,11 +97,11 @@
             <el-form-item label="设备单位名称" prop="equ_name">
                 <el-input v-model="editForm.equ_name" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="购买时间" prop="main_time">
+            <el-form-item label="完工时间" prop="main_time">
                 <el-date-picker
-                        type="date"
+                        type="datetime"
                         placeholder="选择日期"
-                        value-format="yyyy-MM-dd"
+                        value-format="yyyy-MM-dd HH:mm:ss"
                         v-model="editForm.main_time"
                 >
                 </el-date-picker>
@@ -187,6 +187,10 @@
                 self.total=response.data.total;
                 self.tableData = response.data.pageData;
                 //alert(JSON.stringify(response.data))
+                for (var i = 0; i <self.tableData.length; i++) {
+                    var main_time = this.timeFormat(self.tableData[i].main_time);
+                    self.tableData[i].main_time = main_time;
+                }
             })
         },
         methods:{
@@ -220,6 +224,11 @@
                     _self.tableData = response.data.pageData;
                     //alert(JSON.stringify(response.data.pageData));
                     //alert(JSON.stringify(response.data.total));
+                    for (var i = 0; i <_self.tableData.length; i++) {
+                        var main_time = this.timeFormat(_self.tableData[i].main_time);
+                        alert(JSON.stringify(_self.tableData[i].main_time));
+                        _self.tableData[i].main_time = main_time;
+                    }
                 })
                 //console.log(_self.currentPage);
                 //查
@@ -342,32 +351,40 @@
                 this.loadingData();
             },
             //保存点击事件
-            editSubmit:function(editForm){
-                this.$refs[editForm].validate((valid) => {
-                    if (valid) {
-                        var _self = this;
-                        _self.loading = true;
-                        var formData =this.editForm;
-                        var goUrl=this.goUrl;
-                        axios.post(goUrl,formData).then(function(response){
-                            // alert(JSON.stringify(formData));
-                            // alert(formData);
-                            if(response.data>0){
-                                _self.editFormVisible = false;
-
-                            }
-                            _self.loadingData();//重新加载数据
-                        })
+            editSubmit: function () {
+                var editForm = this.editForm;
+                var self = this;
+                //alert(JSON.stringify(editForm));
+                axios.post(self.goUrl,editForm).then(function(response){
+                    //alert(JSON.stringify(response));
+                    if (response.data==1){
+                        //alert(111);
+                        self.$message({
+                            message: "保存成功",
+                            type: 'success'
+                        });
+                        self.editFormVisible = false;
+                        self.loadingData();//重新加载数据
                     } else {
-                        console.log('error submit!!');
-                return false;
-            }
-            })
-
+                        alert("error submit!!");
+                    }
+                })
             }
         }
 
     })
+            //时间更改插入信息
+            function timeFormat(time) {
+                var main_time = time;
+                var date = new Date(main_time)
+                main_time=date.getFullYear() + '-' +
+                    (date.getMonth() + 1) + '-' +
+                    date.getDate() + ' ' +
+                    date.getHours() + ':' +
+                    date.getMinutes() + ':' +
+                    date.getSeconds();
+                return main_time;
+            }
 </script>
 
 </body>

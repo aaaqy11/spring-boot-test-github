@@ -182,9 +182,9 @@ public class PowerServiceImpl  implements PowerService {
             for(Map powerMap:powerMapList){
                 // treeNode = new TreeNode(id, text, parentId, state, iconCls, url);
                 //if (powerMap.get("id") != null && powerMap.get("parentid") != null) {
-                treeNode = new TreeNode(Integer.valueOf(powerMap.get("ID")+""), powerMap.get("NAME")+"",
-                        Integer.valueOf(powerMap.get("PARENTID")+""), powerMap.get("STATE")+""
-                        , powerMap.get("ICONCLS")+"", powerMap.get("URL")+"");
+                treeNode = new TreeNode(Integer.valueOf(powerMap.get("id")+""), powerMap.get("name")+"",
+                        Integer.valueOf(powerMap.get("parentid")+""), powerMap.get("state")+""
+                        , powerMap.get("iconcls")+"", powerMap.get("url")+"");
                 //}
                 powerList.add(treeNode);
             }

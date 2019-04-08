@@ -19,12 +19,9 @@ public class DeptServiceImpl implements DeptService{
      * @return
      */
     @Override
-    public Map getDeptList() {
+    public List<Map> getDeptList() {
         List<Map> deptList = deptDao.getDeptList();
-        Map map = new HashMap();
-        map.put("deptList",deptList);
-        System.out.println(deptList);
-        return map;
+        return deptList;
     }
 
     /**

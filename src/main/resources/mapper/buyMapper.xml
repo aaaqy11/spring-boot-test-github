@@ -13,13 +13,13 @@
 -->
     </select>
     <insert id="buyAdd" >
-        insert into buy VALUES (null,#{price},#{equ_vendor},str_to_date(#{buy_time},'%Y-%m-%d'))
+        insert into buy VALUES (null,#{price},#{equ_vendor},#{buy_time})
     </insert>
     <update id="buyUpdate">
         update buy set
         price=#{price},
         equ_vendor=#{equ_vendor},
-        buy_time=str_to_date(#{buy_time},'%Y-%m-%d')
+        buy_time=#{buy_time}
         where
         id=#{id}
     </update>

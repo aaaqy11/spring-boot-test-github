@@ -1,7 +1,14 @@
 package com.gongyongqin.demo.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gongyongqin.demo.entity.TreeNode;
+import com.gongyongqin.demo.service.EmpService;
 import com.gongyongqin.demo.service.PowerService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,13 +27,53 @@ import java.util.Map;
 public class PowerController {
     @Autowired
     private PowerService powerService;
-        /**
-         * 后台登陆
-         */
-        @RequestMapping("/toLogin")
-        public String toLogin(String userName, String password, Model model, HttpSession session, HttpServletRequest request){
-        return  "/meikuang/userLogin";
+    @Autowired
+    private EmpService empService;
+
+    /**
+     * 后台登陆
+     */
+    @RequestMapping("/userLogin")
+    @ResponseBody
+    public Object toLogin(@RequestBody Map user, Model model, HttpSession session) {
+        String username = user.get("username").toString();
+        String password = user.get("password").toString();
+        if (username != null && !"".equals(username)) {
+            //将用户放到session中
+            session.setAttribute("username", username);
+            //String ipAddress = GetIpUtil.getIpAddress(request);
+            //session.setAttribute("ip",ipAddress);
+
+            //session.setMaxInactiveInterval(60*60);//以秒为单位，即在没有活动60分钟后，session将失效
+            List<Map> maps = empService.selectEmp(username);
+
+             System.out.println(maps);
+            if (maps != null && !"".equals(maps) && maps.size() != 0)
+                session.setAttribute("emp", maps.get(0));//通过用户名登陆的emp信息放到session中
+
+            //shiro的关键代码，执行认证功能
+            // 1.获取subject
+            Subject subject = SecurityUtils.getSubject();
+            //2.封装用户数据
+            UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(username, password);
+            //3.执行登陆方法
+            try {
+                //登陆成功
+                subject.login(usernamePasswordToken);
+
+                //跳到欢迎页面"/meikuang/dept"
+                return 1;
+            } catch (UnknownAccountException e) {
+                //用户名不存在的异常
+                return 2;
+            } catch (IncorrectCredentialsException e) {
+                //用户名不存在的异常
+                return 3;
+            }
+
         }
+        return 1;
+    }
 
         /**
          * 获取权限菜单树
@@ -39,6 +86,14 @@ public class PowerController {
                 List<TreeNode> powerList = powerService.getPowerList(session);
                 return powerList;
         }
+    /**
+     * 获取权限菜单树
+     * @return
+     */
+    @RequestMapping("toLogin")
+    public String toLogin(){
+        return "/meikuang/userLogin";
+    }
     /**
      * 回显权限菜单
      *

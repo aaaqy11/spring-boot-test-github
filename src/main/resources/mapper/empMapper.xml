@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gongyongqin.demo.dao.EmpDao">
+    <select id="selectEmp" resultType="map">
+        select * from user where username = #{username}
+    </select>
+    <select id="getEmpList" resultType="map">
+        select e.id,e.emp_id,e.emp_name,e.emp_sex,r.d_name,e.emp_sql,e.emp_comm,e.emp_time,e.emp_phone
+        from emp e
+        join dept r
+        on    e.emp_dept = r.dept_id
+        <where>
+            <if test="emp_Name != null and emp_Name != ''">
+                and emp_name = #{emp_Name}
+            </if>
+            <if test="d_Name != null and d_Name != ''">
+                and d_name = #{d_Name}
+            </if>
+        </where>
+    </select>
+    <update id="updateEmp">
+        update emp set
+        emp_id=#{emp_id},
+        emp_name=#{emp_name},
+        emp_sex=#{emp_sex},
+        emp_dept=#{d_name},
+        emp_sql=#{emp_sql},
+        emp_comm=#{emp_comm},
+        emp_time=#{emp_time},
+        emp_phone=#{emp_phone}
+        where
+        id=#{id}
+    </update>
+    <update id="updatepassword">
+        update TB_EMP set PASSWORD = #{param1} where USERNAME = #{param2}
+    </update>
+    <insert id="insertEmp">
+        insert into emp values (null,#{emp_id},#{emp_name},#{d_name},str_to_date(#{emp_time},'%Y-%m-%d'),#{emp_sex},#{emp_sql},#{emp_comm},#{emp_phone})
+    </insert>
+    <delete id="deleteEmp">
+        delete from emp where id = #{id}
+    </delete>
+    <delete id="batchDel">
+        delete from emp where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

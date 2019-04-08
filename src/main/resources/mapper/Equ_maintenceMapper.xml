@@ -14,7 +14,7 @@
         </where>
     </select>
     <insert id="addEqu" >
-        insert into Equ_maintenance values (null,#{equ_id},#{equ_name},#{main_infor},#{main_user},date_format(#{main_time},'%Y-%m-%d'),#{fstatue},#{reason})
+        insert into Equ_maintenance values (null,#{equ_id},#{equ_name},#{main_infor},#{main_user},#{main_time},#{fstatue},#{reason})
     </insert>
     <update id="updateEqu">
         update Equ_maintenance set
