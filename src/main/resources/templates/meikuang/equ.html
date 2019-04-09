@@ -23,6 +23,9 @@
             <el-form-item label="设备编号">
                 <el-input v-model="searchForm.equ_id" placeholder="编号"></el-input>
             </el-form-item>
+            <el-form-item label="设备所在单位">
+                <el-input v-model="searchForm.equ_name" placeholder="单位名称"></el-input>
+            </el-form-item>
             <el-button type="primary" icon="el-icon-search" @click="searchClick">查询</el-button>
             <el-button type="success" icon="el-icon-circle-plus-outline" @click="addClick">新增</el-button>
             <el-button type="success" icon="el-icon-refresh" @click="toPush">刷新</el-button>
@@ -43,8 +46,8 @@
             </el-table-column>
             <el-table-column
                     v-model="value1"
-                    prop="main_time"
-                    label="完工时间"
+                    prop="name"
+                    label="设备名称"
                     align="center">
             </el-table-column>
             <el-table-column
@@ -54,10 +57,39 @@
             </el-table-column>
             <el-table-column
                     prop="equ_name"
-                    label="设备名称"
+                    label="设备单位"
                     align="center">
             </el-table-column>
-
+            <el-table-column
+                    v-model="value1"
+                    prop="main_time"
+                    label="完工时间"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    v-model="value1"
+                    prop="main_infor"
+                    label="维护信息"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    v-model="value1"
+                    prop="main_user"
+                    label="维修人员"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    v-model="value1"
+                    prop="fstatue"
+                    label="维修状态"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    v-model="value1"
+                    prop="reason"
+                    label="损坏原因"
+                    align="center">
+            </el-table-column>
             <el-table-column
                     label="操作"
                     align="center">
@@ -91,10 +123,15 @@
     <!--编辑界面-->
     <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
         <el-form :model="editForm" label-width="90px" :rules="editFormRules" ref="editForm" >
+            <el-row :gutter="6">
+                <el-col :span="8">
+            <el-form-item label="设备名称" prop="name">
+                <el-input v-model="editForm.name" auto-complete="off"></el-input>
+            </el-form-item>
             <el-form-item label="设备编号" prop="equ_id">
                 <el-input v-model="editForm.equ_id" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="设备单位名称" prop="equ_name">
+            <el-form-item label="设备单位" prop="equ_name">
                 <el-input v-model="editForm.equ_name" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="完工时间" prop="main_time">
@@ -106,6 +143,33 @@
                 >
                 </el-date-picker>
             </el-form-item>
+                </el-col>
+                <el-col :span="9">
+                    <el-form-item label="维护人员" prop="main_user">
+                        <el-input v-model="editForm.main_user" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="维修状态" prop="fstatue">
+                        <el-tooltip :content="'Switch value: ' + editForm.fstatue" placement="top">
+                        <el-switch
+                                style="display: block"
+                                v-model="editForm.fstatue"
+                                active-color="#13ce66"
+                                inactive-color="#ff4949"
+                                active-value="维修完毕"
+                                inactive-value="维修中">
+                        </el-switch>
+                        </el-tooltip>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="11">
+                <el-form-item label="损坏原因" prop="reason">
+                    <el-input v-model="editForm.reason" auto-complete="off" type="textarea" ></el-input>
+                </el-form-item>
+                <el-form-item label="维修信息" prop="main_infor">
+                    <el-input v-model="editForm.main_infor" auto-complete="off" type="textarea" ></el-input>
+                </el-form-item>
+                </el-col>
+            </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click.native="editFormVisible = false">取消</el-button>
@@ -138,7 +202,8 @@
             loading:false,
             //搜索表单
             searchForm: {
-                equ_id: ''
+                equ_id: '',
+                equ_name:''
             },
             //多选值
             multipleSelection: [],
@@ -155,6 +220,9 @@
             editLoading: false,
             goUrl:'',
             editFormRules: {
+                name:[
+                    {required: true, message: '请填写设备名称', trigger: 'blur'}
+                ],
                 equ_id:[
                     {required: true, message: '请填写编号', trigger: 'blur'}
                 ],
@@ -164,6 +232,12 @@
                 main_time:[
                     {required: true, message: '请填写时间', trigger: 'change'}
                 ],
+                main_user:[
+                    {required: true, message: '请填写维修人员姓名', trigger: 'blur'}
+                ],
+                main_infor:[
+                    {required: true, message: '维修信息', trigger: 'blur'}
+                ],
                 reason:[
                     {required: true, message: '请选择原因', trigger: 'change'}
                 ]
@@ -171,6 +245,7 @@
             //编辑界面数据
             editForm: {
                 id:'',
+                name:'',
                 equ_id:'',
                 equ_name:'',
                 main_infor:'',
@@ -198,6 +273,7 @@
             toPush:function(){
                 this.searchForm= {
                     id:'',
+                    name:'',
                     equ_id:'',
                     equ_name:'',
                     main_infor:'',
@@ -217,7 +293,8 @@
                 var searchForm={
                     'pageNo':_self.currentPage,
                     'pageSize':_self.pageSize,
-                    'equ_id':_self.searchForm.equ_id
+                    'equ_id':_self.searchForm.equ_id,
+                    'equ_name':_self.searchForm.equ_name,
                 };
                 axios.post('/equ/getEquListBy',searchForm).then(function(response){
                     _self.total=response.data.total;
@@ -226,7 +303,7 @@
                     //alert(JSON.stringify(response.data.total));
                     for (var i = 0; i <_self.tableData.length; i++) {
                         var main_time = this.timeFormat(_self.tableData[i].main_time);
-                        alert(JSON.stringify(_self.tableData[i].main_time));
+                        //alert(JSON.stringify(_self.tableData[i].main_time));
                         _self.tableData[i].main_time = main_time;
                     }
                 })
@@ -277,6 +354,7 @@
                 //清空url，解决先点更新，点取消，后点添加的是带这条数据的Bug
                 this.editForm= {
                     id:'',
+                    name:'',
                     equ_id:'',
                     equ_name:'',
                     main_infor:'',

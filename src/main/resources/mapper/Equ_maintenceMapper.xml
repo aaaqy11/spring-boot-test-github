@@ -11,16 +11,24 @@
             <if test="equ_id != null and equ_id != ''">
               and equ_id = #{equ_id}
             </if>
+            <if test="equ_name != null and equ_name != ''">
+                and equ_name = #{equ_name}
+            </if>
         </where>
     </select>
     <insert id="addEqu" >
-        insert into Equ_maintenance values (null,#{equ_id},#{equ_name},#{main_infor},#{main_user},#{main_time},#{fstatue},#{reason})
+        insert into Equ_maintenance values (null,#{name},#{equ_id},#{equ_name},#{main_infor},#{main_user},#{main_time},#{id},#{reason})
     </insert>
     <update id="updateEqu">
         update Equ_maintenance set
+        name=#{name},
         equ_id=#{equ_id},
         equ_name=#{equ_name},
-        main_time=#{main_time}
+        main_time=#{main_time},
+        main_infor=#{main_infor},
+        main_user=#{main_user},
+        fstatue=#{fstatue},
+        reason=#{reason}
         where
         id = #{id}
     </update>

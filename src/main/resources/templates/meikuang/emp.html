@@ -21,11 +21,11 @@
     <el-row>
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
             <el-form-item label="员工姓名">
-                <el-input v-model="searchForm.emp_name" placeholder="姓名"></el-input>
+                <el-input v-model="searchForm.emp_name" clearable placeholder="姓名"></el-input>
             </el-form-item>
             <el-form-item label="员工部门">
                 <template>
-                    <el-select v-model="searchForm.d_name" placeholder="请选择">
+                    <el-select v-model="searchForm.d_name" clearable placeholder="请选择">
                         <el-option
                                 v-for="item in options"
                                 :key="item.dept_id"
@@ -195,12 +195,8 @@
     var tableView = new Vue({
         el: '#tableView',
         data: {
-            //部门状态下拉框
-            deptnos:[{STATE:"开启"},{STATE:"关闭"}],
             //部门下拉框
             options:[],
-            //角色下拉框
-            roles:[],
             //列表数据
             tableData: [],
             //显示加载中样式
