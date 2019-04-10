@@ -313,6 +313,13 @@
                 this.editFormVisible = true;
                 //alert(Object.assign({}, row));
                 this.editForm = Object.assign({}, row);
+                alert("1:"+JSON.stringify(this.editForm.d_name))
+                for (var i=0;i<this.options.length;i++){
+                    if (this.editForm.d_name == this.options[i].d_name){
+                        this.editForm.d_name = this.options[i].dept_id
+                    }
+                }
+                alert("2:"+JSON.stringify(this.editForm.d_name));
                 this.loadingData();//重新加载数据
             },
             //表格删除事件
