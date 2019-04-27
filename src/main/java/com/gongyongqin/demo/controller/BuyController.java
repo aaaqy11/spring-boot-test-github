@@ -68,6 +68,17 @@ public class BuyController {
     }
 
     /**
+     * 添加到设备表
+     * @param map
+     * @return
+     */
+    @RequestMapping("toinsertBuy_Equ")
+    @ResponseBody
+    private Object insertBuy_Equ(@RequestBody Map map){
+        return buyService.insertBuy_Equ(map);
+    }
+
+    /**
      * 更新
      * @param map
      * @return

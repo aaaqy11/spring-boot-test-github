@@ -24,8 +24,14 @@ public class Equ_maintenanceServiceImpl implements Equ_maintenanceService{
 
     @Override
     public int addEqu(Map map) {
+        equ_maintenanceDao.addHistory(map);
         return equ_maintenanceDao.addEqu(map);
     }
+
+    /*@Override
+    public int addHistory(Map map) {
+        return equ_maintenanceDao.addHistory(map);
+    }*/
 
     @Override
     public List<Map> getEquListBy(Map map) {

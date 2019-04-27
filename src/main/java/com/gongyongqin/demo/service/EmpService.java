@@ -11,6 +11,12 @@ public interface EmpService {
     List<Map> getEmpList(Map map);
 
     /**
+     * 获取角色列表
+     * @return
+     */
+    List<Map> getRoleList();
+
+    /**
      * 获取账号
      * @param
      * @return
@@ -31,6 +37,13 @@ public interface EmpService {
     int insertEmp(Map map);
 
     /**
+     * 前台员工注册
+     * @param map
+     * @return
+     */
+    int inUserEmp(Map map);
+
+    /**
      * 删除员工
      * @param
      * @return
@@ -46,10 +59,10 @@ public interface EmpService {
     int batchDel(Map map);
     /**
      * 更改密码
-     * @param passWord
-     * @param userName
+     * @param password
+     * @param username
      * @return
      */
-    int updatepassword(String passWord,String userName);
+    int updatepassword(String password,String username);
 
 }

@@ -3,14 +3,22 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gongyongqin.demo.dao.EmpDao">
     <select id="selectEmp" resultType="map">
-        select * from user where username = #{username}
+        select * from emp where username = #{username}
+    </select>
+    <select id="getRoleList" resultType="map">
+        select * from role
     </select>
     <select id="getEmpList" resultType="map">
-        select e.id,e.emp_id,e.emp_name,e.emp_sex,r.d_name,e.emp_sql,e.emp_comm,e.emp_time,e.emp_phone
+        select e.id,e.emp_id,e.emp_name,e.emp_sex,d.d_name,e.emp_sql,e.emp_comm,e.emp_time,e.emp_phone,e.username,e.password,r.role
         from emp e
-        join dept r
-        on    e.emp_dept = r.dept_id
+        join dept d
+        on    e.emp_dept = d.dept_id
+        join role r
+        on    e.roleid = r.id
         <where>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
             <if test="emp_Name != null and emp_Name != ''">
                 and emp_name = #{emp_Name}
             </if>
@@ -28,15 +36,21 @@
         emp_sql=#{emp_sql},
         emp_comm=#{emp_comm},
         emp_time=#{emp_time},
-        emp_phone=#{emp_phone}
+        emp_phone=#{emp_phone},
+        username=#{username},
+        password=#{password},
+        roleid=#{roleid}
         where
         id=#{id}
     </update>
     <update id="updatepassword">
-        update TB_EMP set PASSWORD = #{param1} where USERNAME = #{param2}
+        update emp set password = #{param1} where username = #{param2}
     </update>
     <insert id="insertEmp">
-        insert into emp values (null,#{emp_id},#{emp_name},#{d_name},str_to_date(#{emp_time},'%Y-%m-%d'),#{emp_sex},#{emp_sql},#{emp_comm},#{emp_phone})
+        insert into emp values (null,#{emp_id},#{emp_name},#{d_name},str_to_date(#{emp_time},'%Y-%m-%d'),#{emp_sex},#{emp_sql},#{emp_comm},#{emp_phone},#{username},#{password},#{role})
+    </insert>
+    <insert id="inUserEmp">
+        insert into emp values (null,#{emp_id},#{emp_name},#{emp_dept},null,#{emp_sex},null,null,#{emp_phone},#{username},#{password},null)
     </insert>
     <delete id="deleteEmp">
         delete from emp where id = #{id}

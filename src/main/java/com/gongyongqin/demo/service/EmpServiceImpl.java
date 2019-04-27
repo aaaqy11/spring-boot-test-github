@@ -22,6 +22,13 @@ public class EmpServiceImpl implements EmpService{
         return empDao.getEmpList(map);
     }
 
+    @Override
+    public List<Map> getRoleList() {
+        List RoleList = empDao.getRoleList();
+        return RoleList;
+    }
+
+
     /**
      * 查询用户
      * @param
@@ -52,6 +59,12 @@ public class EmpServiceImpl implements EmpService{
         return empDao.insertEmp(map);
     }
 
+    @Override
+    public int inUserEmp(Map map) {
+        return empDao.inUserEmp(map);
+    }
+
+
     /**
      * 删除员工
      * @param
@@ -81,12 +94,12 @@ public class EmpServiceImpl implements EmpService{
 
     /**
      * 更改密码
-     * @param passWord
-     * @param userName
+     * @param password
+     * @param username
      * @return
      */
     @Override
-    public int updatepassword(String passWord, String userName) {
-        return empDao.updatepassword(passWord,userName);
+    public int updatepassword(String password, String username) {
+        return empDao.updatepassword(password,username);
     }
 }

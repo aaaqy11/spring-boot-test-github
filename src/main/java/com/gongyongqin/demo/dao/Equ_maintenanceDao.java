@@ -5,19 +5,28 @@ import java.util.Map;
 
 public interface Equ_maintenanceDao {
     /**
-     * 员工列表查询
+     * 查询
      */
     //@Select("select * from Equ_maintenance")
     List<Map> getEquList();
 
     /**
-     * 车辆添加
+     * 添加
      */
     //@Insert(value = "insert into equ_maintenance values (null,#{equ_id},#{equ_name},#{main_infor},#{main_user},date_format(#{main_time},'%Y-%m-%d'),#{fstatue},#{reason})")
+
     int addEqu(Map map);
 
     /**
-     * 通过条件获取员工列表
+     * 维修完毕添加到历史表
+     * @param map
+     * @return
+     */
+    int addHistory(Map map);
+
+
+    /**
+     * 通过条件获取列表
      */
     //@Select(value = "select * from equ_maintenance where equ_id=#{equ_id}")
     List<Map> getEquListBy(Map map);

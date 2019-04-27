@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>设备维修历史记录列表</title>
+    <!-- 引入样式 -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+    <script type="text/javascript" src="../js/axios.min.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+<body>
+<div id="app">
+    <h2>{{ message }}</h2>
+</div>
+
+<div id="tableView">
+    <!--列表顶部搜索和工具条-->
+    <el-row>
+        <el-form :inline="true" :model="searchForm" class="demo-form-inline">
+            <el-form-item label="设备编号">
+                    <template>
+                        <el-select v-model="searchForm.equ_id" clearable placeholder="请选择">
+                            <el-option
+                                    v-for="item in tableData"
+                                    :key="item.equ_id"
+                                    :label="item.equ_id"
+                                    :value="item.equ_id">
+                            </el-option>
+                        </el-select>
+                    </template>
+            </el-form-item>
+            <el-button type="primary" icon="el-icon-search" @click="searchClick">查询</el-button>
+            <el-button type="success" icon="el-icon-refresh" @click="toPush">刷新</el-button>
+            </el-form-item>
+        </el-form>
+    </el-row>
+    <!--列表-->
+    <el-row>
+        <el-table
+                :data="tableData"
+                v-loading.body="loading"
+                border
+                @selection-change="selectionChange($event)"
+                style="width: 100%">
+            <el-table-column
+                    type="selection"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    v-model="value1"
+                    prop="equ_name"
+                    label="设备名称"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="equ_id"
+                    label="设备编号"
+                    align="center">
+            </el-table-column>
+
+            <el-table-column
+                    v-model="value1"
+                    prop="main_time"
+                    label="完工时间"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    v-model="value1"
+                    prop="main_infor"
+                    label="维护信息"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    v-model="value1"
+                    prop="main_user"
+                    label="维修人员"
+                    align="center">
+            </el-table-column>
+
+            <el-table-column
+                    v-model="value1"
+                    prop="reason"
+                    label="损坏原因"
+                    align="center">
+            </el-table-column>
+
+        </el-table>
+    </el-row>
+
+    <!--列表底部工具条和分页符-->
+    <el-row style="margin-top: 20px" type="flex" justify="end">
+        <el-col :span="18" >
+            <el-pagination
+                    style="float: right"
+                    @size-change="pageSizeChange"
+                    @current-change="currentPageChange"
+                    :current-page="currentPage"
+                    :page-sizes="[5,10]"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="total">
+            </el-pagination>
+        </el-col>
+    </el-row>
+
+
+</div>
+
+
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: '报修历史列表'
+        }
+    });
+    var tableView = new Vue({
+        el: '#tableView',
+        data: {
+            //下拉框
+            options:[],
+            //角色下拉框
+            roles:[],
+            //列表数据
+            tableData: [],
+            //显示加载中样式
+            loading:false,
+            //搜索表单
+            searchForm: {
+                equ_id: ''
+            },
+            //多选值
+            multipleSelection: [],
+            //当前页
+            currentPage:1,
+            //分页大小
+            pageSize:2,
+            //总条数
+            total:800,
+            //删除的弹出框
+            deleteVisible:false,
+            //编辑界面是否显示
+            editFormVisible: false,
+            editLoading: false,
+            goUrl:'',
+            //编辑界面数据
+            editForm: {
+                id:'',
+                equ_id:'',
+                equ_name:'',
+                main_infor:'',
+                main_user:'',
+                main_time:'',
+                reason:''
+            },
+        },
+        //列表显示
+        created:function(){
+            var self = this;
+            axios.post('/his/toHistoryListBy',{'pageNo':self.currentPage,'pageSize':self.pageSize}).then(function(response){
+                self.total=response.data.total;
+                self.tableData = response.data.pageData;
+                //alert(JSON.stringify(response.data))
+                for (var i = 0; i <self.tableData.length; i++) {
+                    var main_time = this.timeFormat(self.tableData[i].main_time);
+                    self.tableData[i].main_time = main_time;
+                }
+            })
+        },
+        methods:{
+            //清空表格数据
+            toPush:function(){
+                this.searchForm= {
+                    id:'',
+                    equ_id:'',
+                    equ_name:'',
+                    main_infor:'',
+                    main_user:'',
+                    main_time:'',
+                    reason:''
+                }
+                //alert('刷新');
+                this.loadingData();//重新加载数据
+            },
+            //表格重新加载数据
+            loadingData:function() {
+                var _self = this;
+                _self.loading = true;
+                //传过去的参数
+                var searchForm={
+                    'pageNo':_self.currentPage,
+                    'pageSize':_self.pageSize,
+                    'equ_id':_self.searchForm.equ_id
+                };
+                axios.post('/his/toHistoryListBy',searchForm).then(function(response){
+                    _self.total=response.data.total;
+                    _self.tableData = response.data.pageData;
+                    for (var i = 0; i <_self.tableData.length; i++) {
+                        var main_time = this.timeFormat(_self.tableData[i].main_time);
+                        _self.tableData[i].main_time = main_time;
+                    }
+                })
+                //console.log(_self.currentPage);
+                //查
+                setTimeout(function(){
+                    console.info("加载数据成功");
+                    _self.loading = false;
+                },300);
+            },
+            //新建事件
+            addClick:function() {
+                this.goUrl="/equ/toAddEqu";
+                var _self = this;
+                //清空url，解决先点更新，点取消，后点添加的是带这条数据的Bug
+                this.editForm= {
+                    id:'',
+                    equ_id:'',
+                    equ_name:'',
+                    main_infor:'',
+                    main_user:'',
+                    main_time:'',
+                    reason:''
+                }
+                this.editFormVisible = true;
+                _self.loadingData();//重新加载数据
+            },
+            //表格查询事件
+            searchClick:function() {
+                this.loadingData();//重新加载数据
+            },
+            //表格勾选事件
+            selectionChange:function(val) {
+                this.multipleSelection = val;
+                console.info(val);
+            },
+            //分页大小修改事件
+            pageSizeChange:function(val) {
+                console.log('每页 ' + val +' 条');
+                this.pageSize = val;
+                var _self = this;
+                this.loadingData();//重新加载数据
+            },
+            //当前页修改事件
+            currentPageChange:function(val) {
+                this.currentPage = val;
+                this.loadingData();
+            },
+            //保存点击事件
+            editSubmit: function (editForm) {
+                this.$refs[editForm].validate((valid) => {
+                    if (valid) {
+                        var _self = this;
+                        _self.loading = true;
+                        var formData = this.editForm;
+                        var goUrl = this.goUrl;
+                        axios.post(goUrl, formData).then(function (response) {
+                            if (response.data > 0) {
+                                _self.editFormVisible = false;
+                                _self.loadingData();//重新加载数据
+                            }
+                        })
+                    } else {
+                        console.log('error submit!!');
+                return false;
+            }
+            })
+            }
+        }
+
+    })
+    //时间更改插入信息
+    function timeFormat(time) {
+        var main_time = time;
+        var date = new Date(main_time)
+        main_time=date.getFullYear() + '-' +
+            (date.getMonth() + 1) + '-' +
+            date.getDate() + ' ' +
+            date.getHours() + ':' +
+            date.getMinutes() + ':' +
+            date.getSeconds();
+        return main_time;
+    }
+</script>
+
+</body>
+</html>

@@ -93,7 +93,19 @@
                     label="电话"
                     align="center">
             </el-table-column>
-
+            <el-table-column
+                    prop="username"
+                    label="员工账户"
+                    align="center">
+            </el-table-column><el-table-column
+                prop="password"
+                label="员工密码"
+                align="center">
+        </el-table-column><el-table-column
+                prop="role"
+                label="角色"
+                align="center">
+        </el-table-column>
             <el-table-column
                     label="操作"
                     align="center">
@@ -127,14 +139,20 @@
     <!--编辑界面-->
     <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
         <el-form :model="editForm" label-width="90px" :rules="editFormRules" ref="editForm" >
-            <el-row :gutter="5">
+            <el-row :gutter="6">
                 <el-col :span="8">
             <el-form-item label="员工编号" prop="emp_id">
-                <el-input v-model="editForm.emp_id" auto-complete="off"></el-input>
+                <el-input v-model="editForm.emp_id" auto-complete="off" type="number"></el-input>
             </el-form-item>
             <el-form-item label="员工姓名" prop="emp_name">
                 <el-input v-model="editForm.emp_name" auto-complete="off"></el-input>
             </el-form-item>
+                    <el-form-item label="员工账户" prop="username">
+                        <el-input v-model.number="editForm.username" auto-complete="off" ></el-input>
+                    </el-form-item>
+                    <el-form-item label="员工密码" prop="password">
+                        <el-input v-model.number="editForm.password" auto-complete="off" type="password"></el-input>
+                    </el-form-item>
             <el-form-item label="员工部门" prop="d_name">
                 <template>
                 <el-select v-model="editForm.d_name" clearable placeholder="请选择">
@@ -147,17 +165,17 @@
                 </el-select>
                 </template>
             </el-form-item>
-            <el-form-item label="入职时间" prop="emp_time">
-                <el-date-picker
-                    type="date"
-                    placeholder="选择日期"
-                    value-format="yyyy-MM-dd"
-                    v-model="editForm.emp_time"
-                    >
-                </el-date-picker>
-            </el-form-item>
                 </el-col>
                 <el-col :span="8">
+                    <el-form-item label="入职时间" prop="emp_time">
+                        <el-date-picker
+                                type="date"
+                                placeholder="选择日期"
+                                value-format="yyyy-MM-dd"
+                                v-model="editForm.emp_time"
+                        >
+                        </el-date-picker>
+                    </el-form-item>
             <el-form-item label="性别" prop="emp_sex">
                 <el-radio-group v-model="editForm.emp_sex">
                     <el-radio class="radio" label="男">男</el-radio>
@@ -170,9 +188,22 @@
                     <el-form-item label="奖金(元)" prop="emp_comm">
                         <el-input v-model.number="editForm.emp_comm" auto-complete="off" type="number"></el-input>
                     </el-form-item>
+                    <el-form-item label="角色" prop="role">
+                        <template>
+                            <el-select v-model="editForm.role" placeholder="请选择">
+                                <el-option
+                                        v-for="item in roles"
+                                        :key="item.id"
+                                        :label="item.role"
+                                        :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </template>
+                    </el-form-item>
                     <el-form-item label="电话号" prop="emp_phone">
                         <el-input v-model.number="editForm.emp_phone" auto-complete="off"></el-input>
                     </el-form-item>
+
                 </el-col>
             </el-row>
         </el-form>
@@ -197,6 +228,8 @@
         data: {
             //部门下拉框
             options:[],
+            //角色下拉框
+            roles: [],
             //列表数据
             tableData: [],
             //显示加载中样式
@@ -220,36 +253,6 @@
             editFormVisible: false,
             editLoading: false,
             goUrl:'',
-            editFormRules: {
-                emp_id:[
-                    {required: true, message: '请填写编号', trigger: 'blur'}
-                ],
-                emp_name:[
-                    {required: true, message: '请输入员工名', trigger: 'blur'}
-                ],
-                emp_sex:[
-                    {required: true, message: '请填写性别', trigger: 'change'}
-                ],
-                d_name:[
-                    {required: true, message: '请选择部门', trigger: 'change'}
-                ],
-                emp_time:[
-                    {required: true, message: '请选择入职日期', trigger: 'change'}
-                ],
-                emp_sql:[
-                    {required: true, message: '请添加工资', trigger: 'change'}
-                ],
-                emp_comm:[
-                    {required: true, message: '请输入奖金', trigger: 'change'}
-                ],
-                emp_phone:[
-                    {required: true, message: '请输入手机号', trigger: 'change'},
-                    {
-                        pattern: /^1[34578]\d{9}$/,
-                        message: '目前只支持中国大陆的手机号码!'
-                    }
-                ]
-            },
             //编辑界面数据
             editForm: {
                 id:'',
@@ -260,9 +263,52 @@
                 emp_time:'',
                 emp_sql:'',
                 emp_comm:'',
-                emp_phone:''
-
+                emp_phone:'',
+                username:'',
+                password:'',
+                role:''
             },
+            editFormRules: {
+                emp_id: [
+                    {required: true, message: '请填写编号', trigger: 'blur'}
+                ],
+                emp_name: [
+                    {required: true, message: '请输入员工名', trigger: 'blur'}
+                ],
+                d_name: [
+                    {required: true, message: '请选择部门', trigger: 'change'}
+                ],
+                emp_sex: [
+                    {required: true, message: '请填写性别', trigger: 'change'}
+                ],
+                emp_time: [
+                    {required: true, message: '请选择入职日期', trigger: 'change'}
+                ],
+                emp_sql: [
+                    {required: true, message: '请添加工资', trigger: 'change'}
+                ],
+                emp_comm: [
+                    {required: true, message: '请输入奖金', trigger: 'change'}
+                ],
+                emp_phone: [
+                    {required: true, message: '请输入手机号', trigger: 'change'},
+                    {
+                        pattern: /^1[34578]\d{9}$/,
+                        message: '目前只支持中国大陆的手机号码!'
+                    }
+                ],
+                username: [
+                    {required: true, message: '请输入用户名', trigger: 'blur'},
+                    {min: 5, max: 12, message: '长度在 5 到 12 个字符，字母加数字', trigger: 'blur'}
+                ],
+                password: [
+                    {required: true, message: '请输入密码', trigger: 'blur'},
+                    {min: 6, max: 12, message: '长度在 6 到 12 个字符，字母加数字', trigger: 'blur'}
+                ],
+                role: [
+                    {required: true, message: '请选择角色', trigger: 'change'}
+                ]
+            }
         },
         //列表显示
         created:function(){
@@ -274,6 +320,10 @@
             axios.post('/dept/getDeptList').then(function (response) {
                 self.options = response.data;
                 //alert(JSON.stringify(response.data));
+            })
+            axios.post('/emp/getRoleList').then(function (response) {
+                self.roles = response.data;
+                alert(JSON.stringify(response.data));
             })
         },
         methods:{
@@ -360,7 +410,10 @@
                     emp_time:'',
                     emp_sql:'',
                     emp_comm:'',
-                    emp_phone:''
+                    emp_phone:'',
+                    username:'',
+                    password:'',
+                    roleid:''
                 }
                 this.editFormVisible = true;
                 _self.loadingData();//重新加载数据
@@ -428,27 +481,26 @@
                 this.loadingData();
             },
             //保存点击事件
-            editSubmit: function () {
-                var editForm = this.editForm;
-                var self = this;
-                //alert(JSON.stringify(editForm));
-                axios.post(self.goUrl,editForm).then(function(response){
-                    //alert(JSON.stringify(response));
-                    if (response.data==1){
-                        //alert(111);
-                        self.$message({
-                            message: "保存成功",
-                            type: 'success'
-                        });
-                        self.editFormVisible = false;
-                        self.loadingData();//重新加载数据
+            editSubmit: function (editForm) {
+                this.$refs[editForm].validate((valid) => {
+                    if (valid) {
+                        var _self = this;
+                        _self.loading = true;
+                        var formData = this.editForm;
+                        var goUrl = this.goUrl;
+                        axios.post(goUrl, formData).then(function (response) {
+                            if (response.data > 0) {
+                                _self.editFormVisible = false;
+                                _self.loadingData();//重新加载数据
+                            }
+                        })
                     } else {
-                        alert("error submit!!");
-                    }
-                })
+                        console.log('error submit!!');
+                return false;
+            }
+            })
             }
         }
-
     })
 
 </script>

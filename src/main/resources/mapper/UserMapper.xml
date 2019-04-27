@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gongyongqin.demo.dao.Userdao">
+    <select id="userExist" resultType="map">
+        select * from emp where username=#{username}
+    </select>
+    <select id="getUserList" resultType="map">
+        select * from user
+    </select>
+    <select id="getListBy" resultType="map">
+        select * from user
+        <where>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+        </where>
+    </select>
+    <insert id="addUser" >
+        insert into user values (null,#{username},#{password})
+    </insert>
+    <update id="updateUser">
+        update user set
+        username=#{username},
+        password=#{password}
+        where
+        id = #{id}
+    </update>
+    <delete id="deleteUser">
+        delete from user where id=#{id}
+    </delete>
+    <delete id="batchDel">
+        delete from dept where id in
+        <foreach collection="list" item="dept_id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -12,6 +12,12 @@ public interface EmpDao {
     List<Map> getEmpList(Map map);
 
     /**
+     * 获取角色列表
+     * @return
+     */
+    List<Map> getRoleList();
+
+    /**
      * 更改emp
      * @param map
      * @return
@@ -23,6 +29,13 @@ public interface EmpDao {
      * @return
      */
     int insertEmp(Map map);
+
+    /**
+     * 前台注册新增
+     * @param map
+     * @return
+     */
+    int inUserEmp(Map map);
 
     /**
      * 删除员工
@@ -48,10 +61,10 @@ public interface EmpDao {
 
     /**
      * 更改密码
-     * @param passWord
+     * @param password
      * @param
      * @return
      */
-    int updatepassword(String passWord,String username);
+    int updatepassword(String password,String username);
 
 }

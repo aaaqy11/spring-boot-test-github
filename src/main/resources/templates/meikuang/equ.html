@@ -21,15 +21,30 @@
     <el-row>
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
             <el-form-item label="设备编号">
-                <el-input v-model="searchForm.equ_id" placeholder="编号"></el-input>
+                <template>
+                    <el-select v-model="searchForm.equ_id" clearable placeholder="请选择">
+                        <el-option
+                                v-for="item in tableData"
+                                :key="item.equ_id"
+                                :label="item.equ_id"
+                                :value="item.equ_id">
+                        </el-option>
+                    </el-select>
+                </template>
             </el-form-item>
             <el-form-item label="设备所在单位">
-                <el-input v-model="searchForm.equ_name" placeholder="单位名称"></el-input>
+                <el-select v-model="searchForm.equ_name" clearable placeholder="请选择">
+                    <el-option
+                            v-for="item in tableData"
+                            :key="item.equ_name"
+                            :label="item.equ_name"
+                            :value="item.equ_name">
+                    </el-option>
+                </el-select>
             </el-form-item>
             <el-button type="primary" icon="el-icon-search" @click="searchClick">查询</el-button>
             <el-button type="success" icon="el-icon-circle-plus-outline" @click="addClick">新增</el-button>
             <el-button type="success" icon="el-icon-refresh" @click="toPush">刷新</el-button>
-            </el-form-item>
         </el-form>
     </el-row>
     <!--列表-->
@@ -72,12 +87,12 @@
                     label="维护信息"
                     align="center">
             </el-table-column>
-            <el-table-column
+            <!--<el-table-column
                     v-model="value1"
                     prop="main_user"
                     label="维修人员"
                     align="center">
-            </el-table-column>
+            </el-table-column>-->
             <el-table-column
                     v-model="value1"
                     prop="fstatue"
@@ -95,7 +110,8 @@
                     align="center">
                 <template scope="scope">
                     <el-button :plain="true" type="success" size="small" icon="el-icon-edit" @click="editClick(scope.row)">编辑</el-button>
-                    <el-button :plain="true" type="danger" size="small" icon="el-icon-delete" @click="deleteClick(scope.row)">删除</el-button>
+                    <el-button :plain="true" type="success" size="small" icon="el-icon-plus" @click="DdClick(scope.row)">派单</el-button>
+                    <el-button :plain="true" type="primary" size="small" icon="el-icon-warning" @click="deleteClick(scope.row)">维修完毕</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -134,28 +150,37 @@
             <el-form-item label="设备单位" prop="equ_name">
                 <el-input v-model="editForm.equ_name" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="完工时间" prop="main_time">
-                <el-date-picker
-                        type="datetime"
-                        placeholder="选择日期"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        v-model="editForm.main_time"
-                >
-                </el-date-picker>
-            </el-form-item>
+            <el-form-item label="维修人员">
+                     <template>
+                         <el-select v-model="editForm.main_user" clearable placeholder="请选择">
+                             <el-option
+                                     v-for="item in options"
+                                     :key="item.id"
+                                     :label="item.main_user"
+                                     :value="item.id">
+                             </el-option>
+                         </el-select>
+                     </template>
+             </el-form-item>
                 </el-col>
-                <el-col :span="9">
-                    <el-form-item label="维护人员" prop="main_user">
-                        <el-input v-model="editForm.main_user" auto-complete="off"></el-input>
+                <el-col :span="8">
+                    <el-form-item label="完工时间" prop="main_time">
+                        <el-date-picker
+                                type="datetime"
+                                placeholder="选择日期"
+                                value-format="yyyy-MM-dd HH:mm:ss"
+                                v-model="editForm.main_time"
+                        >
+                        </el-date-picker>
                     </el-form-item>
                     <el-form-item label="维修状态" prop="fstatue">
-                        <el-tooltip :content="'Switch value: ' + editForm.fstatue" placement="top">
+                        <el-tooltip :content="'Switch value: ' + editForm.fstatue" placement="top" >
                         <el-switch
                                 style="display: block"
                                 v-model="editForm.fstatue"
                                 active-color="#13ce66"
                                 inactive-color="#ff4949"
-                                active-value="维修完毕"
+                                active-value="待维修"
                                 inactive-value="维修中">
                         </el-switch>
                         </el-tooltip>
@@ -177,6 +202,64 @@
         </div>
     </el-dialog>
 
+    <!--派单界面-->
+    <el-dialog title="编辑" :visible.sync="DdFormVisible" :close-on-click-modal="false">
+    <el-row>
+        <el-table
+                :data="paidanData"
+                v-loading.body="loading"
+                border
+                @selection-change="selectionChange($event)"
+                style="width: 100%">
+            <el-table-column
+                    type="selection"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    v-model="value1"
+                    prop="emp_id"
+                    label="员工编号"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="emp_name"
+                    label="姓名"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="emp_sex"
+                    label="性别"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    label="操作"
+                    align="center">
+                <template scope="scope">
+                    <el-button :plain="true" type="success" size="small" icon="el-icon-plus" @click="PdClick(scope.row)">派单维修</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-row>
+
+        <!--列表底部工具条和分页符-->
+        <el-row style="margin-top: 20px" type="flex" justify="end">
+            <el-col :span="6" align="left">
+                <el-button :plain="true" type="success" size="small" icon="el-icon-success" @click="editSelection">勾选派单</el-button>
+            </el-col>
+            <el-col :span="18" >
+                <el-pagination
+                        style="float: right"
+                        @size-change="pageSizeChangeone"
+                        @current-change="currentPageChangeone"
+                        :current-page="currentPageone"
+                        :page-sizes="[2,6]"
+                        :page-size="pageSizeone"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="total">
+                </el-pagination>
+            </el-col>
+        </el-row>
+    </el-dialog>
 </div>
 
 
@@ -190,14 +273,14 @@
     var tableView = new Vue({
         el: '#tableView',
         data: {
-            //部门状态下拉框
-            deptnos:[{STATE:"开启"},{STATE:"关闭"}],
             //部门下拉框
             options:[],
             //角色下拉框
             roles:[],
             //列表数据
             tableData: [],
+            //派单维修人员
+            paidanData: [],
             //显示加载中样式
             loading:false,
             //搜索表单
@@ -209,14 +292,19 @@
             multipleSelection: [],
             //当前页
             currentPage:1,
+            //当前页
+            currentPageone:1,
             //分页大小
             pageSize:2,
+            //分页大小
+            pageSizeone:2,
             //总条数
             total:800,
             //删除的弹出框
             deleteVisible:false,
             //编辑界面是否显示
             editFormVisible: false,
+            DdFormVisible: false,
             editLoading: false,
             goUrl:'',
             editFormRules: {
@@ -254,6 +342,7 @@
                 fstatue:'',
                 reason:''
             },
+
         },
         //列表显示
         created:function(){
@@ -307,6 +396,10 @@
                         _self.tableData[i].main_time = main_time;
                     }
                 })
+                axios.post('/muser/toMainuserList',{'pageNo':_self.currentPageone, 'pageSize':_self.pageSizeone}).then(function(res){
+                    _self.total=res.data.total;
+                    _self.paidanData = res.data.pageData;
+                })
                 //console.log(_self.currentPage);
                 //查
                 setTimeout(function(){
@@ -322,10 +415,20 @@
                 this.editForm = Object.assign({}, row);
                 this.loadingData();//重新加载数据
             },
+            //派单事件
+            DdClick: function () {
+                this.DdFormVisible = true;
+                this.loadingData();//重新加载数据
+            },
+            //派单维修事件
+            DdClick: function () {
+                this.DdFormVisible = true;
+                this.loadingData();//重新加载数据
+            },
             //表格删除事件
             deleteClick:function(row) {
                 var _self = this;
-                this.$confirm('确认删除' + row.equ_id +'吗?', '提示', {
+                this.$confirm('确认' + row.equ_id +'以维修完毕吗?', '提示', {
                     type: 'warning'
 
                 }).then(function(){
@@ -363,6 +466,7 @@
                     fstatue:'',
                     reason:''
                 }
+
                 this.editFormVisible = true;
                 _self.loadingData();//重新加载数据
             },
@@ -423,30 +527,42 @@
                 var _self = this;
                 this.loadingData();//重新加载数据
             },
+            //派单分页大小修改事件
+            pageSizeChangeone:function(val) {
+                console.log('每页 ' + val +' 条');
+                this.pageSizeone = val;
+                var _self = this;
+                this.loadingData();//重新加载数据
+            },
             //当前页修改事件
             currentPageChange:function(val) {
                 this.currentPage = val;
                 this.loadingData();
             },
+            //派单当前页修改事件
+            currentPageChangeone:function(val) {
+                this.currentPageone = val;
+                this.loadingData();
+            },
             //保存点击事件
-            editSubmit: function () {
-                var editForm = this.editForm;
-                var self = this;
-                //alert(JSON.stringify(editForm));
-                axios.post(self.goUrl,editForm).then(function(response){
-                    //alert(JSON.stringify(response));
-                    if (response.data==1){
-                        //alert(111);
-                        self.$message({
-                            message: "保存成功",
-                            type: 'success'
-                        });
-                        self.editFormVisible = false;
-                        self.loadingData();//重新加载数据
+            editSubmit: function (editForm) {
+                this.$refs[editForm].validate((valid) => {
+                    if (valid) {
+                        var _self = this;
+                        _self.loading = true;
+                        var formData = this.editForm;
+                        var goUrl = this.goUrl;
+                        axios.post(goUrl, formData).then(function (response) {
+                            if (response.data > 0) {
+                                _self.editFormVisible = false;
+                                _self.loadingData();//重新加载数据
+                            }
+                        })
                     } else {
-                        alert("error submit!!");
-                    }
-                })
+                        console.log('error submit!!');
+                return false;
+            }
+            })
             }
         }
 

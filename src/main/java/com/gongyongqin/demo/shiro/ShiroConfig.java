@@ -34,16 +34,15 @@ public class ShiroConfig {
 
         //必须登陆才可以访问
         //设置哪些页面必须授权后才可以登陆
-        filterMap.put("/dept/toDept","authc");//部门页面
-        /*filterMap.put("/power/wel","authc");//欢迎页面
+        filterMap.put("/power/wel","authc");//欢迎页面
         filterMap.put("/tree/goTreeList","authc");//菜单树页面
-        filterMap.put("/emp/toList","authc");//员工列表页面
+        filterMap.put("/emp/toEmp","authc");//员工列表页面
         filterMap.put("/dept/toDept","authc");//部门列表页面
         filterMap.put("/emp/updatePassWord","authc");//更改密码页面
-        filterMap.put("/bid/toCheckBid","authc");//标初审页面*/
+        filterMap.put("/bid/toCheckBid","authc");//标初审页面
 
-        //filterMap.put("/poewr/","authc");//
-        //filterMap.put("/user/index","authc");//首页
+        filterMap.put("/poewr/","authc");//
+        filterMap.put("/user/index","authc");//首页
 
         //被拦截后跳转登陆页面
         shiroFilterFactoryBean.setLoginUrl("/power/toLogin");

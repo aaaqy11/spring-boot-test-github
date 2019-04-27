@@ -18,6 +18,12 @@ public interface Equ_maintenanceService {
     int addEqu(Map map);
 
     /**
+     * 维修完毕添加到历史表
+     * @param map
+     * @return
+     */
+
+    /**
      * 通过条件获取员工列表
      */
     List<Map> getEquListBy(Map map);

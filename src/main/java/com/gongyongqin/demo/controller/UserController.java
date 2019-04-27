@@ -38,13 +38,13 @@ public class UserController {
      *通过条件获取部门列表
      * @return
      */
-    @RequestMapping("/getDeptListBy")
+    @RequestMapping("/getListBy")
     @ResponseBody
-    public Object getDeptListBy(@RequestBody Map map){
+    public Object getListBy(@RequestBody Map map){
         //设置当前第几页和每页显示数量
         PageHelper.startPage(Integer.valueOf(map.get("pageNo") + ""), Integer.valueOf(map.get("pageSize") + ""));
         //用PageInfo对结果进行包装
-        PageInfo<Map> pageInfo = new PageInfo<Map>(userservice.getDeptListBy(map));
+        PageInfo<Map> pageInfo = new PageInfo<Map>(userservice.getListBy(map));
         Map resultMap = new HashMap();
         resultMap.put("total", pageInfo.getTotal());
         resultMap.put("pageData", pageInfo.getList());
@@ -55,11 +55,11 @@ public class UserController {
      * @param map
      * @return
      */
-    @RequestMapping("toAdd")
+    /*@RequestMapping("toAdd")
     @ResponseBody
     public Object toAdd(@RequestBody Map map) {
         return userservice.addUser(map);
-    }
+    }*/
 
     /**
      * 员工更新操作

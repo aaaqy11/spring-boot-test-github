@@ -17,7 +17,10 @@
         </where>
     </select>
     <insert id="addEqu" >
-        insert into Equ_maintenance values (null,#{name},#{equ_id},#{equ_name},#{main_infor},#{main_user},#{main_time},#{id},#{reason})
+        insert into Equ_maintenance values (null,#{equ_id},#{name},#{main_infor},#{main_user},#{main_time},#{fstatue},#{reason},#{equ_name})
+    </insert>
+    <insert id="addHistory" >
+        insert into main_history values (null,#{equ_id},#{name},#{main_infor},#{main_user},#{main_time},#{reason},#{now})
     </insert>
     <update id="updateEqu">
         update Equ_maintenance set

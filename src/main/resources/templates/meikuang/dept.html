@@ -340,6 +340,26 @@
                 this.loadingData();//重新加载数据
             },
             //保存点击事件
+            editSubmit: function (editForm) {
+                this.$refs[editForm].validate((valid) => {
+                    if (valid) {
+                        var _self = this;
+                        _self.loading = true;
+                        var formData = this.editForm;
+                        var goUrl = this.goUrl;
+                        axios.post(goUrl, formData).then(function (response) {
+                            if (response.data > 0) {
+                                _self.editFormVisible = false;
+                                _self.loadingData();//重新加载数据
+                            }
+                        })
+                    } else {
+                        console.log('error submit!!');
+                return false;
+            }
+            })
+            }
+            /*//保存点击事件
             editSubmit: function () {
                 var editForm = this.editForm;
                 var self = this;
@@ -358,7 +378,7 @@
                         alert("error submit!!");
                     }
                 })
-            }
+            }*/
         }
 
     })

@@ -70,6 +70,16 @@ public class Equ_maintenanceController {
         return equ_maintenanceService.addEqu(map);
     }
 
+    /**
+     * 更改状态添加到历史表
+     * @param map
+     * @return
+     */
+   /* @RequestMapping("toAddHistory")
+    @ResponseBody
+    private Object toAddHistory(@RequestBody Map map){
+        return equ_maintenanceService.addHistory(map);
+    }*/
 
     /**
      * 更改

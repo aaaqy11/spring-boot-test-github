@@ -28,6 +28,22 @@ public class EmpController {
         return "meikuang/emp";
     }
 
+    @RequestMapping("/toEmpInfo")
+    public String toEmpInf(){
+        return "meikuang/empInfo";
+    }
+
+    /**
+     * 查询角色表
+     * @param map
+     * @return
+     */
+    @RequestMapping("/getRoleList")
+    @ResponseBody
+    public Object getRoleList(Map map){
+        return empService.getRoleList();
+    }
+
     /**
      * 获取员工信息
      * @param map
@@ -58,6 +74,7 @@ public class EmpController {
     public Object updateEmp(@RequestBody Map map) {
         return empService.updateEmp(map);
     }
+
     /**
      * 插入员工信息
      * @param map
@@ -68,6 +85,18 @@ public class EmpController {
     public Object insertEmp(@RequestBody Map map) {
         return empService.insertEmp(map);
     }
+
+    /**
+     * 前台插入员工信息
+     * @param map
+     * @return
+     */
+    @RequestMapping("/toInUserEmp")
+    @ResponseBody
+    public Object toInUserEmp(@RequestBody Map map) {
+        return empService.inUserEmp(map);
+    }
+
     /**
      * 删除员工信息
      * @param map
@@ -93,26 +122,28 @@ public class EmpController {
      */
     @RequestMapping("/updatePassWord")
     public String updatePassWord(){
-        return "back/updatePassWord";
+        return "meikuang/updatePassWord";
     }
+
     /**
      * 更改密码
      */
     @ResponseBody
     @RequestMapping("/updatepassword")
     public Object updatepassword(@RequestBody Map map, HttpSession httpSession){
-        String userName = httpSession.getAttribute("userName")+"";
-        return empService.updatepassword(map.get("passWord")+"",userName);
+        String username = httpSession.getAttribute("username")+"";
+        return empService.updatepassword(map.get("password")+"",username);
     }
+
     /**
      * 通过用户名查询原密码
      */
     @ResponseBody
     @RequestMapping("/selectEmpPassWord")
     public Object selectEmpPassWord( HttpSession httpSession){
-        String userName = httpSession.getAttribute("userName")+"";
+        String username = httpSession.getAttribute("username")+"";
         Map map = new HashMap();
-        map.put("userName",userName);
+        map.put("username",username);
         List<Map> empList = empService.getEmpList(map);
         return empList;
     }

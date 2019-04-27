@@ -15,12 +15,9 @@ public class BuyServiceImpl implements BuyService{
     private BuyDao buyDao;
 
     @Override
-    public Map buyList() {
+    public List<Map> buyList() {
         List<Map> buyList = buyDao.buyList();
-        Map map = new HashMap();
-        map.put("buyList",buyList);
-        System.out.println(buyList);
-        return map;
+        return buyList;
     }
 
     @Override
@@ -31,6 +28,12 @@ public class BuyServiceImpl implements BuyService{
     @Override
     public int buyAdd(Map map) {
         return buyDao.buyAdd(map);
+    }
+
+    @Override
+    public int insertBuy_Equ(Map map) {
+        buyDao.updateBuy_Equ(map);
+        return buyDao.insertBuy_Equ(map);
     }
 
     @Override

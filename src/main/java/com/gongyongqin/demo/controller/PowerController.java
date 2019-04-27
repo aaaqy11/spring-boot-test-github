@@ -1,9 +1,11 @@
 package com.gongyongqin.demo.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gongyongqin.demo.dao.Userdao;
 import com.gongyongqin.demo.entity.TreeNode;
 import com.gongyongqin.demo.service.EmpService;
 import com.gongyongqin.demo.service.PowerService;
+import com.gongyongqin.demo.service.Userservice;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -36,18 +38,19 @@ public class PowerController {
     @RequestMapping("/userLogin")
     @ResponseBody
     public Object toLogin(@RequestBody Map user, Model model, HttpSession session) {
-        String username = user.get("username").toString();
-        String password = user.get("password").toString();
+        String username = user.get("username")+"";
+        String password = user.get("password")+"";
         if (username != null && !"".equals(username)) {
             //将用户放到session中
             session.setAttribute("username", username);
+            System.out.println(username);
             //String ipAddress = GetIpUtil.getIpAddress(request);
             //session.setAttribute("ip",ipAddress);
 
             //session.setMaxInactiveInterval(60*60);//以秒为单位，即在没有活动60分钟后，session将失效
             List<Map> maps = empService.selectEmp(username);
 
-             System.out.println(maps);
+            System.out.println(maps);
             if (maps != null && !"".equals(maps) && maps.size() != 0)
                 session.setAttribute("emp", maps.get(0));//通过用户名登陆的emp信息放到session中
 
@@ -136,7 +139,7 @@ public class PowerController {
     @ResponseBody
     @RequestMapping("/user")
     public Object getUser(HttpSession httpSession){
-        return httpSession.getAttribute("userName");
+        return httpSession.getAttribute("username");
     }
 
     /**
@@ -146,7 +149,7 @@ public class PowerController {
      */
     @RequestMapping("/wel")
     public String wel() {
-        return "back/wel";
+        return "meikuang/tree/index";
     }
     /**
      * 跳转登陆页面

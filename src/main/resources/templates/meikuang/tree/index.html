@@ -27,12 +27,14 @@
 <body>
 
 <div id="app">
+
+
     <el-container style=" border: 1px solid #eee">
 
 
         <!--整体头部-->
         <el-header id="hd" style="text-align: right; font-size: 30px; height: 100px; font-family: Consolas">
-                <span>用户名：{{userName}}</span>
+            <span>用户名：{{username}}</span>
         </el-header>
 
 
@@ -40,10 +42,12 @@
         <el-container>
 
             <!--左侧菜单栏-->
+
             <el-aside width="250px" style="background-color: rgb(255,255,255);">
                 <!--accordion是否每次只打开一个同级节点  highlight-current高亮-->
                 <el-tree node-key="id" :default-expand-all="false" :icon-class="icon" :highlight-current="true" :data="treeData"
-                         :props="defaultProps" :accordion="true" @node-click="handleNodeClick">
+                         :props="defaultProps" :accordion="true" @node-click="handleNodeClick"  default-active="2">
+
                     <span class="custom-tree-node" slot-scope="{ node, data }">
                         <span>
                             <i :class="node.icon">
@@ -52,7 +56,6 @@
 				    </span>
                 </el-tree>
             </el-aside>
-
 
             <!--右侧表单-->
             <el-main id="ma">
@@ -71,6 +74,7 @@
             </el-main>
         </el-container>
     </el-container>
+
 </div>
 <script>
     new Vue({
@@ -87,9 +91,9 @@
             icon: 'el-icon-menu',
             editableTabsValue2: '2',
             editableTabs2: [{
-                title: '马六甲P2P后台',
+                title: '万泰电子后台系统',
                 name: '2',
-                url: '/power/wel'
+                url: 'http://www.hnwtdz.com.cn/'
             }],
             tabIndex: 2,
             userName: ''
@@ -116,12 +120,12 @@
                 if (activeName === targetName) {
                     tabs.forEach((tab, index) => {
                         if (tab.name === targetName) {
-                            let nextTab = tabs[index + 1] || tabs[index - 1];
-                            if (nextTab) {
-                                activeName = nextTab.name;
-                            }
+                        let nextTab = tabs[index + 1] || tabs[index - 1];
+                        if (nextTab) {
+                            activeName = nextTab.name;
                         }
-                    });
+                    }
+                });
                 }
                 this.editableTabsValue2 = activeName;
                 this.editableTabs2 = tabs.filter(tab => tab.name !== targetName);
@@ -129,12 +133,12 @@
         },
         created: function () {
             var self = this;
-            axios.post('/power/tree').then(function (response) {
+            axios.post('/power/getPList').then(function (response) {
                 self.treeData = response.data;
             })
             axios.post('/power/user').then(function (response) {
-                //alert(JSON.stringify(response.data))
-                self.userName = response.data;
+                alert(JSON.stringify(response.data))
+                self.username = response.data;
             })
         }
     })

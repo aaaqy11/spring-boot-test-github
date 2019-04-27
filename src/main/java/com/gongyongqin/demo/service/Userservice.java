@@ -20,7 +20,7 @@ public interface Userservice {
     /**
      * 通过条件获取员工列表
      */
-    List<Map> getDeptListBy(Map map);
+    List<Map> getListBy(Map map);
 
     /**
      * 更改
@@ -34,4 +34,10 @@ public interface Userservice {
      */
     int deleteUser(Integer ID);
 
+    /**
+     * 用户名唯一性校验
+     * @param username
+     * @return
+     */
+    int userExist(String username);
 }

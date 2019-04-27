@@ -8,7 +8,7 @@ public interface BuyService {
      *查
      * @return
      */
-    Map buyList();
+    List<Map> buyList();
     /**
      * 查询购买设备表
      */
@@ -20,6 +20,13 @@ public interface BuyService {
      * @return
      */
     int buyAdd(Map map);
+
+    /**
+     * 一键导入设备表
+     * @param map
+     * @return
+     */
+    int insertBuy_Equ(Map map);
 
     /**
      * 更新设备购买表

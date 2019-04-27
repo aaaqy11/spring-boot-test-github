@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>员工列表</title>
+    <title>临时登陆列表</title>
     <!-- 引入样式 -->
     <script type="text/javascript" src="../js/vue.js"></script>
     <script type="text/javascript" src="../js/axios.min.js"></script>
@@ -20,11 +20,10 @@
     <!--列表顶部搜索和工具条-->
     <el-row>
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
-            <el-form-item label="部门名称">
-                <el-input v-model="searchForm.user_dept" placeholder="账号"></el-input>
+            <el-form-item label="账号查询">
+                <el-input v-model="searchForm.username" placeholder="账号"></el-input>
             </el-form-item>
             <el-button type="primary" icon="search" @click="searchClick">查询</el-button>
-            <el-button type="success" icon="plus" @click="addClick">新增</el-button>
             <el-button type="success" icon="plus" @click="toPush">刷新</el-button>
             </el-form-item>
         </el-form>
@@ -42,28 +41,13 @@
                     align="center">
             </el-table-column>
             <el-table-column
-                    prop="user_id"
-                    label="员工编号"
+                    prop="username"
+                    label="临时登录账号"
                     align="center">
             </el-table-column>
             <el-table-column
-                    prop="user_name"
-                    label="员工名称"
-                    align="center">
-            </el-table-column>
-            <el-table-column
-                    prop="user_sex"
-                    label="性别"
-                    align="center">
-            </el-table-column>
-            <el-table-column
-                    prop="user_sal"
-                    label="薪水"
-                    align="center">
-            </el-table-column>
-            <el-table-column
-                    prop="user_dept"
-                    label="部门"
+                    prop="password"
+                    label="临时登录密码"
                     align="center">
             </el-table-column>
             <el-table-column
@@ -99,24 +83,13 @@
     <!--编辑界面-->
     <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
         <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-            <el-form-item label="员工编号" prop="user_id">
-                <el-input v-model="editForm.user_id" auto-complete="off"></el-input>
+            <el-form-item label="临时登录账号" prop="username">
+                <el-input v-model="editForm.username" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="员工名称" prop="user_name">
-                <el-input v-model="editForm.user_name" auto-complete="off"></el-input>
+            <el-form-item label="临时登录密码" prop="password">
+                <el-input v-model="editForm.password" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="员工性别" prop="user_sex">
-                <el-radio-group v-model="editForm.user_sex">
-                    <el-radio class="radio" label="男">男</el-radio>
-                    <el-radio class="radio" label="女">女</el-radio>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item label="员工薪水" prop="user_sal">
-                <el-input v-model="editForm.user_sal" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="员工部门" prop="user_dept">
-                <el-input v-model="editForm.user_dept" auto-complete="off"></el-input>
-            </el-form-item>
+
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click.native="editFormVisible = false">取消</el-button>
@@ -131,7 +104,7 @@
     var app = new Vue({
         el: '#app',
         data: {
-            message: '员工列表'
+            message: '临时登陆列表'
         }
     });
     var tableView = new Vue({
@@ -165,51 +138,26 @@
             editFormVisible: false,
             editLoading: false,
             goUrl:'',
-            editFormRules: {
-                user_id:[
-                    {required: true, message: '请填写员工编号', trigger: 'blur'}
-                ],
-                user_name:[
-                    {required: true, message: '请添加员工名称', trigger: 'blur'}
-                ],
-                user_sex:[
-                    {required: true, message: '请填写性别', trigger: 'change'}
-                ],
-                user_sal:[
-                    {required: true, message: '请填写薪水', trigger: 'blur'}
-                ],
-                user_dept:[
-                    {required: true, message: '请选择部门', trigger: 'change'}
-                ]
-            },
             //编辑界面数据
             editForm: {
                 id:'',
-                user_id:'',
-                user_name:'',
-                user_sex:'',
-                user_sal:'',
-                user_dept:''
+                username:'',
+                password:''
             },
         },
         //列表显示
         created:function(){
             var self = this;
-            axios.post('/user/toGetUserList',{'pageNo':self.currentPage,'pageSize':self.pageSize}).then(function(response){
+            axios.post('/user/getListBy',{'pageNo':self.currentPage,'pageSize':self.pageSize}).then(function(response){
                 self.total=response.data.total;
-                self.tableData = response.data.userInfo;
+                self.tableData = response.data.pageData;
             })
         },
         methods:{
             //清空表格数据
             toPush:function(){
                 this. searchForm= {
-                    id:'',
-                    user_id:'',
-                    user_name:'',
-                    user_sex:'',
-                    user_sal:'',
-                    user_dept:''
+                    username:''
                 }
                 //alert('刷新');
                 this.loadingData();//重新加载数据
@@ -219,8 +167,11 @@
                 var _self = this;
                 _self.loading = true;
                 //传过去的参数
-                var searchForm={'pageNo':_self.currentPage,'pageSize':_self.pageSize,'user_dept':_self.searchForm.user_dept};
-                axios.post('/user/getDeptListBy',searchForm).then(function(response){
+                var searchForm={
+                    'pageNo':_self.currentPage,
+                    'pageSize':_self.pageSize,
+                    'username':_self.searchForm.username};
+                axios.post('/user/getListBy',searchForm).then(function(response){
                     _self.total=response.data.total;
                     _self.tableData = response.data.pageData;
                 })
@@ -263,23 +214,6 @@
                     if(e != "cancel")
                         console.log("出现错误：" + e);
                 });
-            },
-            //新建事件
-            addClick:function() {
-                this.goUrl="/user/toAdd";
-                var _self = this;
-                //清空url，解决先点更新，点取消，后点添加的是带这条数据的Bug
-                this.editForm= {
-                    id:'',
-                    user_id:'',
-                    user_name:'',
-                    user_sex:'',
-                    user_sal:'',
-                    user_dept:''
-
-                }
-                this.editFormVisible = true;
-                _self.loadingData();//重新加载数据
             },
             //表格查询事件
             searchClick:function() {
